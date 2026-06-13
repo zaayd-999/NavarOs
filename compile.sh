@@ -2,36 +2,72 @@
 
 sed -i 's/\r//' compile.sh
 
-# create output folder if not exists
 mkdir -p output
 
-# bootloader
+# Assembly
+nasm cpu/isr.asm -f elf32 -o output/isr.o
+nasm cpu/irq.asm -f elf32 -o output/irq_asm.o
+
+# Bootloader
 nasm boot/bootloader.asm -f bin -o output/bootloader.bin
 nasm boot/kernel_entry.asm -f elf32 -o output/kernel_entry.o
 
-# drivers
+# Drivers
 g++ -m32 -ffreestanding -fno-exceptions -fno-rtti \
     -fno-builtin -fno-stack-protector \
+    -fno-pie -fno-pic \
     -nostdlib -nodefaultlibs \
     -c drivers/vga/vga.cpp -o output/vga.o
 
-# kernel
 g++ -m32 -ffreestanding -fno-exceptions -fno-rtti \
     -fno-builtin -fno-stack-protector \
+    -fno-pie -fno-pic \
+    -nostdlib -nodefaultlibs \
+    -c drivers/keyboard/keyboard.cpp -o output/keyboard.o
+
+# CPU
+g++ -m32 -ffreestanding -fno-exceptions -fno-rtti \
+    -fno-builtin -fno-stack-protector \
+    -fno-pie -fno-pic \
+    -nostdlib -nodefaultlibs \
+    -c cpu/idt.cpp -o output/idt.o
+
+g++ -m32 -ffreestanding -fno-exceptions -fno-rtti \
+    -fno-builtin -fno-stack-protector \
+    -fno-pie -fno-pic \
+    -nostdlib -nodefaultlibs \
+    -c cpu/irq.cpp -o output/irq_cpp.o
+
+g++ -m32 -ffreestanding -fno-exceptions -fno-rtti \
+    -fno-builtin -fno-stack-protector \
+    -fno-pie -fno-pic \
+    -nostdlib -nodefaultlibs \
+    -c cpu/pic.cpp -o output/pic.o
+
+# Kernel
+g++ -m32 -ffreestanding -fno-exceptions -fno-rtti \
+    -fno-builtin -fno-stack-protector \
+    -fno-pie -fno-pic \
     -nostdlib -nodefaultlibs \
     -c kernel/kernel.cpp -o output/kernel.o
 
-# link
+# Link
 ld -m elf_i386 -T link.ld \
     -o output/kernel.elf \
     output/kernel_entry.o \
+    output/isr.o \
+    output/irq_asm.o \
     output/vga.o \
-    output/kernel.o
+    output/idt.o \
+    output/kernel.o \
+    output/pic.o \
+    output/irq_cpp.o \
+    output/keyboard.o
 
-# extract raw binary
+# Extract raw binary
 objcopy -O binary output/kernel.elf output/kernel.bin
 
-# combine
+# Combine bootloader + kernel
 cat output/bootloader.bin output/kernel.bin > output/os.bin
 
 echo "Done! output/os.bin is ready"

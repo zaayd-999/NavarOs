@@ -3,16 +3,21 @@ ENTRY(_start)
 SECTIONS {
     . = 0x1000;
 
-    .text : {
+    .text : ALIGN(4) {
         *kernel_entry.o(.text)
         *(.text)
     }
 
-    .data : {
+    .rodata : ALIGN(4) {
+        *(.rodata)
+    }
+
+    .data : ALIGN(4) {
         *(.data)
     }
 
-    .bss : {
+    .bss : ALIGN(4) {
+        *(COMMON)
         *(.bss)
     }
 }
