@@ -30,10 +30,10 @@ NavarOs is a hobby operating system built from scratch. It boots into 32-bit pro
   - [x] scroll
   - [x] hide_cursor
   - [x] move_cursor
-- [ ] Keyboard driver
-- [ ] IDT (Interrupt Descriptor Table)
+  - [x] Keyboard driver
+  - [x] IDT (Interrupt Descriptor Table)
 - [ ] Memory manager (kmalloc / kfree)
-- [ ] Shell
+- [? ] Shell
 - [ ] File system
 
 ---
@@ -69,6 +69,9 @@ NavarOs/
 sudo apt install nasm gcc g++ gcc-multilib g++-multilib binutils qemu-system-x86
 ```
 
+```
+sudo pacman -S nasm gcc g++ binutils qemu-system-x86 qemu-desktop
+```
 ---
 
 ## Build
