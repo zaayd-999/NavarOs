@@ -2,6 +2,7 @@
 #include "../cpu/idt.h"
 #include "../cpu/irq.h"
 #include "../drivers/keyboard/keyboard.h"
+#include "../shell/shell.h"
 
 extern "C" void kernel_main() {
     clear_screen();
@@ -22,7 +23,8 @@ extern "C" void kernel_main() {
     print_string("IDT loaded successfully.");
     new_line();
 
-    print_string("Testing Keyboard.");
+    shell_init();
+    shell_print_prompt();
     new_line();
 
     keyboard_init();

@@ -44,6 +44,12 @@ g++ -m32 -ffreestanding -fno-exceptions -fno-rtti \
     -nostdlib -nodefaultlibs \
     -c cpu/pic.cpp -o output/pic.o
 
+# Shell
+g++ -m32 -ffreestanding -fno-exceptions -fno-rtti \
+    -fno-builtin -fno-stack-protector \
+    -fno-pie -fno-pic \
+    -nostdlib -nodefaultlibs \
+    -c shell/shell.cpp -o output/shell.o
 # Kernel
 g++ -m32 -ffreestanding -fno-exceptions -fno-rtti \
     -fno-builtin -fno-stack-protector \
@@ -62,7 +68,8 @@ ld -m elf_i386 -T link.ld \
     output/kernel.o \
     output/pic.o \
     output/irq_cpp.o \
-    output/keyboard.o
+    output/keyboard.o \
+    output/shell.o
 
 # Extract raw binary
 objcopy -O binary output/kernel.elf output/kernel.bin

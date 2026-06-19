@@ -2,6 +2,7 @@
 #include "../../cpu/ports.h"
 #include "../vga/vga.h"
 #include "keyboard.h"
+#include "../../shell/shell.h"
 
 static keyInfo keymap[128];
 static bool shift_pressed = false;
@@ -58,6 +59,9 @@ void keyboard_init() {
 }
 
 
+static char input_buffer[256];
+static int input_length = 0;
+
 void keyboard_handler() {
     unsigned char scancode = inb(0x60);
 	
@@ -81,8 +85,11 @@ void keyboard_handler() {
 
     if(scancode >= 128) return;
 
-    if(scancode == 0x1C) {
+    if(scancode == 0x1C && !shift_pressed) {
         new_line();
+        shell_execute_cmd(input_buffer);
+        input_buffer[0] = '\0';
+        input_length = 0;
         return;
     }
 
@@ -90,6 +97,11 @@ void keyboard_handler() {
 
     char c = uppercase ? keymap[scancode].shifted : keymap[scancode].normal;
 
-    if(c) print_char(c);
+    if(c) {
+        print_char(c);
+        input_buffer[input_length] = c;
+        input_length++;
+        input_buffer[input_length] = '\0';
+    }
 
 }
