@@ -6,8 +6,8 @@
 
 extern "C" void kernel_main() {
     clear_screen();
-    hide_cursor();
-
+    //hide_cursor();
+    set_cursor_style_bar();
     print_string("NavarOs is ");
     set_color(GREEN, BLACK);
     print_string("OK");
@@ -24,8 +24,6 @@ extern "C" void kernel_main() {
     new_line();
 
     shell_init();
-    shell_print_prompt();
-    new_line();
 
     keyboard_init();
 

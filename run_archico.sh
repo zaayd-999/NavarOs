@@ -1,3 +1,3 @@
 #!/bin/bash
 
-qemu-system-x86_64 -drive format=raw,file=output/os.bin -boot c --display gtk
+qemu-system-x86_64 -drive format=raw,file=output/os.bin -boot c --display gtk -full-screen

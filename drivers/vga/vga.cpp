@@ -1,4 +1,5 @@
 #include "vga.h"
+#include "../../cpu/ports.h"
 
 unsigned short* vga    = (unsigned short*)0xB8000;
 unsigned char cursor_row = 0;
@@ -42,6 +43,7 @@ void print_char(char c) {
     if (cursor_col >= 80) {
         new_line();
     }
+    move_cursor();
 }
 
 void print_string(const char* str) {
@@ -109,19 +111,31 @@ void hide_cursor() {
 void move_cursor() {
     unsigned short pos = cursor_row * 80 + cursor_col;
 
-    asm volatile (
-        "movw $0x3D4, %dx\n"
-        "movb $0x0F, %al\n"
-        "outb %al, %dx\n"
-        "movw $0x3D5, %dx\n"
-        "outb %al, %dx\n"
-    );
+    outb(0x3D4, 0x0F);
+    outb(0x3D5, (unsigned char)(pos & 0xFF));
 
-    asm volatile (
-        "movw $0x3D4, %dx\n"
-        "movb $0x0E, %al\n"
-        "outb %al, %dx\n"
-        "movw $0x3D5, %dx\n"
-        "outb %al, %dx\n"
-    );
+    outb(0x3D4, 0x0E);
+    outb(0x3D5, (unsigned char)((pos>>8) & 0xFF));
+}
+
+void backspace() {
+    if(cursor_row == 0 && cursor_col == 0) return;
+
+    if(cursor_col > 0) {
+        cursor_col--;
+    } else {
+        cursor_row--;
+        cursor_col = 79;
+    }
+
+    int index = cursor_row * 80 + cursor_col;
+    vga[index] = (color << 8) | ' ';
+}
+
+void set_cursor_style_bar() {
+    outb(0x3D4, 0x0A);
+    outb(0x3D5, 0x00);
+
+    outb(0x3D4, 0x0B);
+    outb(0x3D5, 0x0F);
 }

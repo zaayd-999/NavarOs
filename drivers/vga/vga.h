@@ -1,6 +1,11 @@
 #ifndef VGA_H
 #define VGA_H
 
+extern unsigned short* vga;
+extern unsigned char cursor_row;
+extern unsigned char cursor_col;
+extern unsigned char color;
+
 enum VGA_COLOR {
     BLACK         = 0,
     BLUE          = 1,
@@ -29,5 +34,7 @@ void print_int(int n);
 void print_hex(unsigned int n);
 void hide_cursor();
 void move_cursor();
+void backspace();
+void set_cursor_style_bar();
 
 #endif

@@ -3,12 +3,15 @@
 #include "../vga/vga.h"
 #include "keyboard.h"
 #include "../../shell/shell.h"
+#include "../../shell/line_editor.h"
+#include "../../shell/history.h"
 
 static keyInfo keymap[128];
 static bool shift_pressed = false;
 static bool ctr_pressed = false;
 static bool alt_pressed = false;
 static bool caps_pressed = false;
+static bool extended_keys = false;
 
 void keyboard_init() {
     
@@ -55,16 +58,46 @@ void keyboard_init() {
     keymap[0x39] = {' ', ' '};   // Space
     keymap[0x1C] = {'\n', '\n'}; // Enter
     //keymap[0x0E] = {'\b', '\b'}; // Backspace
+    
 
 }
 
 
-static char input_buffer[256];
-static int input_length = 0;
-
 void keyboard_handler() {
     unsigned char scancode = inb(0x60);
 	
+    if(scancode == 0xE0) {
+        extended_keys = true;
+        return;
+    }
+
+    if(extended_keys) {
+        extended_keys = false;
+        if(scancode == 0x4B) {
+            line_editor_move_left();
+            return;
+        }
+
+        if(scancode == 0x4D) {
+            line_editor_move_right();
+            return;
+        }
+
+        if(scancode == 0x48) {
+            const char* cmd = history_previous();
+            if(cmd) line_editor_set_text(cmd);
+            return;
+        }
+
+        if(scancode == 0x50) {
+            const char* cmd = history_next();
+            if(cmd) line_editor_set_text(cmd);
+            return;
+        }
+
+        return;
+    }
+
 	if(scancode == 0x3A) caps_pressed = !caps_pressed; // Toggle Caps lock
     
 	if(scancode == 0x2A || scancode == 0x36) {
@@ -87,21 +120,31 @@ void keyboard_handler() {
 
     if(scancode == 0x1C && !shift_pressed) {
         new_line();
-        shell_execute_cmd(input_buffer);
-        input_buffer[0] = '\0';
-        input_length = 0;
+        
+        const char* cmd = line_editor_get_buffer();
+        
+        shell_execute_cmd(cmd);
+
+        line_editor_clear();
+
         return;
     }
 
-    // Next Implementing the delete
+    if(scancode == 0x0E) {
+        line_editor_backspace();    
+        return;
+    }
+
+    if(scancode == 0x3B) {
+        line_editor_set_text("Hello From NavarOs");
+        return;
+    }
 
     char c = uppercase ? keymap[scancode].shifted : keymap[scancode].normal;
 
     if(c) {
-        print_char(c);
-        input_buffer[input_length] = c;
-        input_length++;
-        input_buffer[input_length] = '\0';
+        line_editor_insert_char(c);    
+        return;
     }
 
 }

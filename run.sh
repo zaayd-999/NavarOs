@@ -1,3 +1,3 @@
 #!/bin/bash
 
-qemu-system-x86_64 -drive format=raw,file=output/os.bin -boot c
+qemu-system-x86_64 -drive format=raw,file=output/os.bin -boot c -full-screen
