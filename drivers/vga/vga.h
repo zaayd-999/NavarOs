@@ -26,6 +26,9 @@ enum VGA_COLOR {
 };
 
 void set_color(unsigned char fg, unsigned char bg);
+void set_color(unsigned char color);
+unsigned char get_color();
+unsigned char get_color_at(unsigned char row, unsigned char col);
 void clear_screen();
 void new_line();
 void print_char(char c);

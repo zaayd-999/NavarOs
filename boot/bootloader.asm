@@ -9,7 +9,7 @@ start:
     mov sp, 0x7C00
 
     mov ah, 0x02
-    mov al, 16  
+    mov al, 64  
     mov ch, 0   
     mov cl, 2   
     mov dh, 0   

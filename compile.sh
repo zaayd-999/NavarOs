@@ -62,6 +62,13 @@ g++ -m32 -ffreestanding -fno-exceptions -fno-rtti \
     -fno-pie -fno-pic \
     -nostdlib -nodefaultlibs \
     -c shell/history.cpp -o output/history.o
+
+g++ -m32 -ffreestanding -fno-exceptions -fno-rtti \
+    -fno-builtin -fno-stack-protector \
+    -fno-pie -fno-pic \
+    -nostdlib -nodefaultlibs \
+    -c shell/command_parser.cpp -o output/command_parser.o
+
 # Kernel
 g++ -m32 -ffreestanding -fno-exceptions -fno-rtti \
     -fno-builtin -fno-stack-protector \
@@ -83,7 +90,8 @@ ld -m elf_i386 -T link.ld \
     output/keyboard.o \
     output/shell.o \
     output/line_editor.o \
-    output/history.o
+    output/history.o \
+    output/command_parser.o
 
 # Extract raw binary
 objcopy -O binary output/kernel.elf output/kernel.bin

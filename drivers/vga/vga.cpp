@@ -1,5 +1,6 @@
 #include "vga.h"
 #include "../../cpu/ports.h"
+#include "../../constants.h"
 
 unsigned short* vga    = (unsigned short*)0xB8000;
 unsigned char cursor_row = 0;
@@ -8,6 +9,15 @@ unsigned char color      = 0x0F;
 
 void set_color(unsigned char fg, unsigned char bg) {
     color = (bg << 4) | fg;
+}
+
+void set_color(unsigned char colour) {
+    color = colour;
+}
+
+
+unsigned char get_color_at(unsigned char row, unsigned char col) {
+    return (vga[row * VGA_WIDTH + col] >> 8 ) & 0xFF;
 }
 
 void clear_screen() {
@@ -138,4 +148,8 @@ void set_cursor_style_bar() {
 
     outb(0x3D4, 0x0B);
     outb(0x3D5, 0x0F);
+}
+
+unsigned char get_color() {
+    return color;
 }
