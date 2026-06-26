@@ -1,11 +1,6 @@
 #ifndef VGA_H
 #define VGA_H
 
-extern unsigned short* vga;
-extern unsigned char cursor_row;
-extern unsigned char cursor_col;
-extern unsigned char color;
-
 enum VGA_COLOR {
     BLACK         = 0,
     BLUE          = 1,

@@ -1,5 +1,6 @@
 #include "line_editor.h"
-#include "../drivers/vga/vga.h"
+#include "../../drivers/vga/vga.h"
+#include "../../drivers/vga/vga_constants.h"
 
 static char buffer[256];
 static int length = 0;
@@ -9,25 +10,25 @@ static unsigned char start_row = 0;
 static unsigned char start_col = 0;
 
 static void set_cursor_from_input_position() {
-    int index = start_row * 80 + start_col + cursor;
-    cursor_row = index / 80;
-    cursor_col = index % 80;
+    int index = start_row * VGA_WIDTH + start_col + cursor;
+    cursor_row = index / VGA_WIDTH;
+    cursor_col = index % VGA_WIDTH;
 
     move_cursor();
 }
 
 static void redraw_line() {
-    int start_index = start_row * 80 + start_col;
+    int start_index = start_row * VGA_WIDTH + start_col;
 
     for(int i = 0 ; i < 265; i++) {
         int index = start_index + i;
-        if(index >= 80*25) break;
+        if(index >= VGA_WIDTH*VGA_HEIGHT) break;
         vga[index] = (color<<8) | ' ';
     }
 
     for(int i = 0; i < length; i++) {
         int index = start_index + i;
-        if(index >= 80 * 25) break;
+        if(index >= VGA_WIDTH * VGA_HEIGHT) break;
         vga[index] = (color<<8) | buffer[i];
     }
 
@@ -98,9 +99,9 @@ void line_editor_clear() {
 }
 
 static void clear_display_line() {
-    int start = start_row * 80 + start_col;
+    int start = start_row * VGA_WIDTH + start_col;
 
-    for(int i = 0; i < 256 && start_col + i < 80 ; i++) {
+    for(int i = 0; i < 256 && start_col + i < VGA_WIDTH ; i++) {
         vga[start+i] = (color<<8) | ' ';
     }
 }

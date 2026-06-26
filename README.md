@@ -1,90 +1,172 @@
-# NavarOs
+# 🚀 NavarOS
 
-A simple x86 operating system built from scratch using Assembly and C++.
+> A 32-bit x86 operating system built from scratch using **C++** and **x86 Assembly**.
 
-![Status](https://img.shields.io/badge/status-in%20development-yellow)
-![Language](https://img.shields.io/badge/language-C%2B%2B%20%2B%20ASM-blue)
-![Architecture](https://img.shields.io/badge/arch-x86%2032bit-green)
-
----
-
-## Overview
-
-NavarOs is a hobby operating system built from scratch. It boots into 32-bit protected mode using a custom bootloader written in x86 Assembly, then hands control to a C++ kernel that provides basic OS functionality.
+![Status](https://img.shields.io/badge/status-active%20development-yellow)
+![Architecture](https://img.shields.io/badge/architecture-x86%2032--bit-green)
+![Language](https://img.shields.io/badge/language-C%2B%2B%20%7C%20Assembly-blue)
+![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
 ---
 
-## Features
+## 📖 About
 
-- [x] 16-bit real mode to 32-bit protected mode switch
-- [x] GDT (Global Descriptor Table)
-- [x] Kernel written in C++
-- [x] VGA text mode driver
-  - [x] print_string
-  - [x] print_char
-  - [x] print_int
-  - [x] print_hex
-  - [x] set_color
-  - [x] clear_screen
-  - [x] new_line
-  - [x] scroll
-  - [x] hide_cursor
-  - [x] move_cursor
-  - [x] Keyboard driver
-  - [x] IDT (Interrupt Descriptor Table)
-- [ ] Memory manager (kmalloc / kfree)
-- [? ] Shell
-- [ ] File system
+NavarOS is a personal operating system project created to learn low-level systems programming by implementing every major operating system component from scratch.
+
+The project starts from a custom BIOS bootloader and gradually builds a complete operating system including interrupt handling, device drivers, memory management, a shell, a file system, and eventually multitasking.
 
 ---
 
-## Project Structure
+# ✨ Current Features
 
+## Boot Process
+
+* ✅ Custom 512-byte bootloader
+* ✅ Loads kernel from disk
+* ✅ Switches from Real Mode to Protected Mode
+* ✅ Global Descriptor Table (GDT)
+
+---
+
+## Kernel
+
+* ✅ 32-bit C++ kernel
+* ✅ Custom linker script
+* ✅ Stack initialization
+* ✅ Modular architecture
+
+---
+
+## VGA Driver
+
+* ✅ print_char()
+* ✅ print_string()
+* ✅ print_int()
+* ✅ print_hex()
+* ✅ clear_screen()
+* ✅ scroll()
+* ✅ new_line()
+* ✅ set_color()
+* ✅ Hardware cursor
+* ✅ Cursor movement
+* ✅ Cursor visibility
+
+---
+
+## Interrupt Management
+
+* ✅ Interrupt Descriptor Table (IDT)
+* ✅ Interrupt Service Routines (ISR)
+* ✅ PIC Remapping
+* ✅ CPU Exception Handling
+
+---
+
+## Keyboard Driver
+
+* ✅ PS/2 Keyboard Driver
+* ✅ Scancode Set 1
+* ✅ Shift Support
+* ✅ Multiple Keyboard Layouts
+* ✅ Runtime Layout Switching
+
+---
+
+## Interactive Shell
+
+* ✅ Command execution
+* ✅ Interactive line editor
+* ✅ Left / Right cursor movement
+* ✅ Character insertion
+* ✅ Backspace
+* ✅ Command history
+* ✅ Execute previous command (`!`)
+
+---
+
+## Command Parser
+
+Supports commands such as:
+
+```text
+create user --name "Zaayd Kaiche" --password "my \"secret\"" --admin
 ```
-NavarOs/
+
+Features:
+
+* ✅ Positional arguments
+* ✅ Boolean flags
+* ✅ String flags
+* ✅ Long options (`--name`)
+* ✅ Quoted strings
+* ✅ Escape sequences
+
+---
+
+# 📁 Project Structure
+
+```text
+NavarOS
+│
 ├── boot/
-│   ├── bootloader.asm      # 512 byte bootloader
-│   └── kernel_entry.asm    # entry point, calls kernel_main
-├── drivers/
-│   └── vga/
-│       ├── vga.cpp         # VGA text mode driver
-│       └── vga.h           # VGA function declarations
+│   ├── bootloader.asm
+│   └── kernel_entry.asm
+│
 ├── kernel/
-│   └── kernel.cpp          # main kernel
-├── output/                 # compiled binaries (generated)
-│   └── os.bin              # final disk image
-├── link.ld                 # linker script
-├── compile.sh              # build script
-├── README.md
-└── screenshot/            
+│   ├── kernel.cpp
+│   ├── cpu/
+│   │     ├── interrupts/
+│   │     ├── pic/
+│   │     └── ports/
+│   │
+│   ├── drivers/
+│   │     ├── keyboard/
+│   │     └── vga/
+│   │
+│   └── shell/
+│         ├── editor/
+│         └── parser/
+│
+├── output/
+├── compile.sh
+├── run.sh
+└── README.md
 ```
 
 ---
 
-## Requirements
+# 🖥️ Build
 
-### Linux / WSL (recommended)
+## Arch Linux
 
 ```bash
-sudo apt install nasm gcc g++ gcc-multilib g++-multilib binutils qemu-system-x86
+sudo pacman -S \
+nasm \
+gcc \
+binutils \
+qemu-system-x86
 ```
 
-```
-sudo pacman -S nasm gcc g++ binutils qemu-system-x86 qemu-desktop
-```
----
+## Ubuntu
 
-## Build
+```bash
+sudo apt install \
+nasm \
+gcc \
+g++ \
+gcc-multilib \
+g++-multilib \
+binutils \
+qemu-system-x86
+```
+
+Build:
 
 ```bash
 bash compile.sh
 ```
 
-Output will be in `output/os.bin`.
-
----
-
-## Run
+Run:
 
 ```bash
 bash run.sh
@@ -92,82 +174,88 @@ bash run.sh
 
 ---
 
-## How it works
+# 🧠 Boot Sequence
 
-### Boot process
-
-```
+```text
 BIOS
-  └─→ loads bootloader from sector 1 at 0x7C00
-        └─→ sets up GDT
-              └─→ switches to 32-bit protected mode
-                    └─→ loads kernel from disk to 0x1000
-                          └─→ jumps to kernel_entry.asm
-                                └─→ calls kernel_main() in C++
+   │
+   ▼
+Bootloader
+   │
+   ▼
+Real Mode
+   │
+   ▼
+Protected Mode
+   │
+   ▼
+Kernel Entry
+   │
+   ▼
+Kernel Initialization
+   │
+   ├── GDT
+   ├── IDT
+   ├── ISR
+   ├── IRQ
+   ├── VGA
+   ├── Keyboard
+   └── Shell
 ```
-
-### Memory layout
-
-```
-Address         Content
-────────────────────────────────
-0x7C00          bootloader (512 bytes)
-0x1000          kernel
-0x90000         stack
-0xB8000         VGA buffer (80x25 cells)
-```
-
-### VGA text mode
-
-The VGA driver writes directly to physical memory at `0xB8000`. Each character cell is 2 bytes:
-
-```
-[ character (1 byte) ][ color (1 byte) ]
-
-color byte:
-  bits 7-4 = background color
-  bits 3-0 = foreground color
-```
-
-#### Color table
-
-| Value | Color         | Value | Color         |
-|-------|---------------|-------|---------------|
-| 0     | Black         | 8     | Dark Gray     |
-| 1     | Blue          | 9     | Light Blue    |
-| 2     | Green         | 10    | Light Green   |
-| 3     | Cyan          | 11    | Light Cyan    |
-| 4     | Red           | 12    | Light Red     |
-| 5     | Magenta       | 13    | Light Magenta |
-| 6     | Brown         | 14    | Yellow        |
-| 7     | Light Gray    | 15    | White         |
 
 ---
 
-## Roadmap
+# 🗺️ Roadmap
 
-- [ ] Keyboard driver — read scancodes from port 0x60
-- [ ] IDT — handle hardware interrupts
-- [ ] Memory manager — kmalloc / kfree
-- [ ] Shell — read and execute commands
-- [ ] File system — read/write files
+## Completed
+
+* ✅ Bootloader
+* ✅ Protected Mode
+* ✅ GDT
+* ✅ VGA Driver
+* ✅ IDT
+* ✅ ISR
+* ✅ IRQ
+* ✅ Keyboard Driver
+* ✅ Interactive Shell
+* ✅ Command History
+* ✅ Line Editor
+* ✅ Command Parser
+
+## In Progress
+
+* 🚧 Paging
+* 🚧 Physical Memory Manager
+
+## Planned
+
+* ⬜ Heap (`kmalloc`)
+* ⬜ ATA Driver
+* ⬜ File System
+* ⬜ ELF Loader
+* ⬜ User Mode
+* ⬜ Scheduler
+* ⬜ Multitasking
+* ⬜ Virtual File System
+* ⬜ Mouse Driver
+* ⬜ PCI
+* ⬜ Networking
+* ⬜ Graphical Interface
 
 ---
 
-## Author
+# 📷 Screenshots
 
-Built by **NavarOs** — learning OS development from scratch.
-
----
-
-## Screenshot
-
-![NavarOs running in QEMU](screenshot/boot.png)
-
-> NavarOs booting in QEMU — VGA text mode output in 32-bit protected mode.
+[ NavarOS Development Log #1 | Interactive Shell & Advanced Command Parser ](https://youtu.be/blMKrGNLY0g)
 
 ---
 
-## License
+# 🎯 Goal
 
-MIT
+The objective of NavarOS is not simply to create another operating system, but to understand how every major subsystem works by implementing it from scratch—from the bootloader to multitasking.
+
+---
+
+# 📄 License
+
+MIT License

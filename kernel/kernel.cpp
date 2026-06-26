@@ -1,8 +1,8 @@
-#include "../drivers/vga/vga.h"
-#include "../cpu/idt.h"
-#include "../cpu/irq.h"
-#include "../drivers/keyboard/keyboard.h"
-#include "../shell/shell.h"
+#include "./drivers/vga/vga.h"
+#include "./cpu/interrupts/idt.h"
+#include "./cpu/interrupts/irq.h"
+#include "./drivers/keyboard/keyboard.h"
+#include "./shell/editor/shell.h"
 
 extern "C" void kernel_main() {
     clear_screen();

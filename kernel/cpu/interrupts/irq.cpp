@@ -1,5 +1,5 @@
-#include "../drivers/keyboard/keyboard.h"
-#include "pic.h"
+#include "../../drivers/keyboard/keyboard.h"
+#include "../pic/pic.h"
 #include "irq.h"
 
 extern "C" void irq_handler(int irq) {

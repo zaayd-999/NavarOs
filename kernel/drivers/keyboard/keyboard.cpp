@@ -1,14 +1,15 @@
 #include "keyboard.h"
-#include "../../cpu/ports.h"
+#include "../../cpu/ports/ports.h"
 #include "../vga/vga.h"
 #include "keyboard.h"
-#include "../../shell/shell.h"
-#include "../../shell/line_editor.h"
-#include "../../shell/history.h"
+#include "../../shell/editor/shell.h"
+#include "../../shell/editor/line_editor.h"
+#include "../../shell/parser/history.h"
+#include "keyboard_constants.h"
 
-static keyInfo keymap_us[128];
-static keyInfo keymap_fr[128];
-static keyInfo keymap_ar[128];
+static keyInfo keymap_us[KEYMAP_ENTRIES];
+static keyInfo keymap_fr[KEYMAP_ENTRIES];
+static keyInfo keymap_ar[KEYMAP_ENTRIES];
 static bool shift_pressed = false;
 static bool ctr_pressed = false;
 static bool alt_pressed = false;
@@ -175,7 +176,7 @@ void keyboard_handler() {
         return;
     }
 
-    if(scancode >= 128) return;
+    if(scancode >= KEYMAP_ENTRIES) return;
 
     if(scancode == 0x1C && !shift_pressed) {
         new_line();

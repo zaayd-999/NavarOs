@@ -1,8 +1,8 @@
 #include "vga.h"
-#include "../../cpu/ports.h"
-#include "../../constants.h"
+#include "../../cpu/ports/ports.h"
+#include "vga_constants.h"
 
-unsigned short* vga    = (unsigned short*)0xB8000;
+unsigned short* vga    = (unsigned short*)VGA_MEMORY;
 unsigned char cursor_row = 0;
 unsigned char cursor_col = 0;
 unsigned char color      = 0x0F;
@@ -21,7 +21,7 @@ unsigned char get_color_at(unsigned char row, unsigned char col) {
 }
 
 void clear_screen() {
-    for (int i = 0; i < 80 * 25; i++) {
+    for (int i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++) {
         vga[i] = (color << 8) | ' ';
     }
     cursor_row = 0;
@@ -31,14 +31,14 @@ void clear_screen() {
 void new_line() {
     cursor_col = 0;
     cursor_row++;
-    if (cursor_row >= 25) {
-        for (int i = 0; i < 80 * 24; i++) {
-            vga[i] = vga[i + 80];
+    if (cursor_row >= VGA_HEIGHT) {
+        for (int i = 0; i < VGA_WIDTH * VGA_HEIGHT-1; i++) {
+            vga[i] = vga[i + VGA_WIDTH];
         }
-        for (int i = 80 * 24; i < 80 * 25; i++) {
+        for (int i = VGA_WIDTH * VGA_HEIGHT-1; i < VGA_WIDTH * VGA_HEIGHT; i++) {
             vga[i] = (color << 8) | ' ';
         }
-        cursor_row = 24;
+        cursor_row = VGA_HEIGHT-1;
     }
 }
 
@@ -47,10 +47,10 @@ void print_char(char c) {
         new_line();
         return;
     }
-    int index = cursor_row * 80 + cursor_col;
+    int index = cursor_row * VGA_WIDTH + cursor_col;
     vga[index] = (color << 8) | c;
     cursor_col++;
-    if (cursor_col >= 80) {
+    if (cursor_col >= VGA_WIDTH) {
         new_line();
     }
     move_cursor();
@@ -119,7 +119,7 @@ void hide_cursor() {
 }
 
 void move_cursor() {
-    unsigned short pos = cursor_row * 80 + cursor_col;
+    unsigned short pos = cursor_row * VGA_WIDTH + cursor_col;
 
     outb(0x3D4, 0x0F);
     outb(0x3D5, (unsigned char)(pos & 0xFF));
@@ -135,10 +135,10 @@ void backspace() {
         cursor_col--;
     } else {
         cursor_row--;
-        cursor_col = 79;
+        cursor_col = VGA_WIDTH-1;
     }
 
-    int index = cursor_row * 80 + cursor_col;
+    int index = cursor_row * VGA_WIDTH + cursor_col;
     vga[index] = (color << 8) | ' ';
 }
 

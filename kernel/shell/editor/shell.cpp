@@ -1,9 +1,9 @@
 #include "shell.h"
-#include "../drivers/vga/vga.h"
+#include "../../drivers/vga/vga.h"
 #include "line_editor.h"
-#include "history.h"
-#include "../drivers/keyboard/keyboard.h"
-#include "command_parser.h"
+#include "../parser/history.h"
+#include "../../drivers/keyboard/keyboard.h"
+#include "../parser/command_parser.h"
 
 static bool equals(const char* a, const char* b) {
     int i = 0;
@@ -33,71 +33,6 @@ void shell_init() {
     history_init();
     shell_print_prompt();
 }
-
-/*
-void shell_execute_cmd(const char* command) {
-    Command cmd = parse_command(command);
-    if(equals(cmd.,"!")) {
-        const char* last = history_top();
-        if(last==nullptr) {
-            print_string("No commands in history.");
-            new_line();
-            shell_print_prompt();
-            return;
-        }
-
-        print_string(last);
-        new_line();
-        shell_execute_cmd(last);
-        return;
-    }
-
-    history_add(cmd);
-
-    if(equals(cmd,"clear")) {
-        clear_screen();
-        shell_print_prompt();
-        return;
-    }
-
-    if(equals(cmd,"help")) {
-        print_string("Commands: clear, help");
-        new_line();
-        shell_print_prompt();
-        return;
-    }
-
-    if(equals(cmd,"exit")) {
-        print_string("Exiting NavarOs shell....");
-        new_line();
-        while(1){
-            asm volatile("hlt");
-        }
-    }
-
-    if(equals(cmd, "layout us")) {
-        set_keyboard_layout(KEYBOARD_LAYOUT_US);
-        print_string("Keyboard layout: US");
-        new_line();
-        shell_print_prompt();
-        return;
-    }
-
-    if(equals(cmd,"layout fr")) {
-        set_keyboard_layout(KEYBOARD_LAYOUT_FR);
-        print_string("Keyboard layout: FR");
-        new_line();
-        shell_print_prompt();
-        return;
-    }
-    
-    print_string("Unknown command: ");
-    print_string(cmd);
-    new_line();
-    shell_print_prompt();
-}
-
-*/
 
 void shell_execute_cmd(const char* input) {
     Command cmd = parse_command(input);

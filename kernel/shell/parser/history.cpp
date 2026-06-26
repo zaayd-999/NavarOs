@@ -1,7 +1,5 @@
 #include "history.h"
-
-#define HISTORY_MAX 67
-#define CMD_MAX 256
+#include "parser_constants.h"
 
 static char history[HISTORY_MAX][CMD_MAX];
 

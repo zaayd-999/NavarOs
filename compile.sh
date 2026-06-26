@@ -5,8 +5,8 @@ sed -i 's/\r//' compile.sh
 mkdir -p output
 
 # Assembly
-nasm cpu/isr.asm -f elf32 -o output/isr.o
-nasm cpu/irq.asm -f elf32 -o output/irq_asm.o
+nasm kernel/cpu/interrupts/isr.asm -f elf32 -o output/isr.o
+nasm kernel/cpu/interrupts/irq.asm -f elf32 -o output/irq_asm.o
 
 # Bootloader
 nasm boot/bootloader.asm -f bin -o output/bootloader.bin
@@ -17,57 +17,57 @@ g++ -m32 -ffreestanding -fno-exceptions -fno-rtti \
     -fno-builtin -fno-stack-protector \
     -fno-pie -fno-pic \
     -nostdlib -nodefaultlibs \
-    -c drivers/vga/vga.cpp -o output/vga.o
+    -c kernel/drivers/vga/vga.cpp -o output/vga.o
 
 g++ -m32 -ffreestanding -fno-exceptions -fno-rtti \
     -fno-builtin -fno-stack-protector \
     -fno-pie -fno-pic \
     -nostdlib -nodefaultlibs \
-    -c drivers/keyboard/keyboard.cpp -o output/keyboard.o
+    -c kernel/drivers/keyboard/keyboard.cpp -o output/keyboard.o
 
 # CPU
 g++ -m32 -ffreestanding -fno-exceptions -fno-rtti \
     -fno-builtin -fno-stack-protector \
     -fno-pie -fno-pic \
     -nostdlib -nodefaultlibs \
-    -c cpu/idt.cpp -o output/idt.o
+    -c kernel/cpu/interrupts/idt.cpp -o output/idt.o
 
 g++ -m32 -ffreestanding -fno-exceptions -fno-rtti \
     -fno-builtin -fno-stack-protector \
     -fno-pie -fno-pic \
     -nostdlib -nodefaultlibs \
-    -c cpu/irq.cpp -o output/irq_cpp.o
+    -c kernel/cpu/interrupts/irq.cpp -o output/irq_cpp.o
 
 g++ -m32 -ffreestanding -fno-exceptions -fno-rtti \
     -fno-builtin -fno-stack-protector \
     -fno-pie -fno-pic \
     -nostdlib -nodefaultlibs \
-    -c cpu/pic.cpp -o output/pic.o
+    -c kernel/cpu/pic/pic.cpp -o output/pic.o
 
 # Shell
 g++ -m32 -ffreestanding -fno-exceptions -fno-rtti \
     -fno-builtin -fno-stack-protector \
     -fno-pie -fno-pic \
     -nostdlib -nodefaultlibs \
-    -c shell/shell.cpp -o output/shell.o
+    -c kernel/shell/editor/shell.cpp -o output/shell.o
 
 g++ -m32 -ffreestanding -fno-exceptions -fno-rtti \
     -fno-builtin -fno-stack-protector \
     -fno-pie -fno-pic \
     -nostdlib -nodefaultlibs \
-    -c shell/line_editor.cpp -o output/line_editor.o
+    -c kernel/shell/editor/line_editor.cpp -o output/line_editor.o
 
 g++ -m32 -ffreestanding -fno-exceptions -fno-rtti \
     -fno-builtin -fno-stack-protector \
     -fno-pie -fno-pic \
     -nostdlib -nodefaultlibs \
-    -c shell/history.cpp -o output/history.o
+    -c kernel/shell/parser/history.cpp -o output/history.o
 
 g++ -m32 -ffreestanding -fno-exceptions -fno-rtti \
     -fno-builtin -fno-stack-protector \
     -fno-pie -fno-pic \
     -nostdlib -nodefaultlibs \
-    -c shell/command_parser.cpp -o output/command_parser.o
+    -c kernel/shell/parser/command_parser.cpp -o output/command_parser.o
 
 # Kernel
 g++ -m32 -ffreestanding -fno-exceptions -fno-rtti \

@@ -1,10 +1,11 @@
 #include "idt.h"
 #include "irq.h"
-#include "pic.h"
-#include "../drivers/vga/vga.h"
-#include "../drivers/keyboard/keyboard.h"
+#include "../pic/pic.h"
+#include "../../drivers/vga/vga.h"
+#include "../../drivers/keyboard/keyboard.h"
+#include "idt_constants.h"
 
-IDTEntry idt[256];
+IDTEntry idt[IDT_ENTIES];
 IDTPointer idt_ptr;
 
 static void idt_set_gate(int n , unsigned int handler) {
@@ -21,10 +22,10 @@ void idt_init() {
 
     pic_remap();
 
-    idt_ptr.limit = sizeof(IDTEntry) * 256 - 1;
+    idt_ptr.limit = sizeof(IDTEntry) * IDT_ENTIES - 1;
     idt_ptr.base = (unsigned int)&idt;
     
-    for (int i = 0 ; i < 256; i++) {
+    for (int i = 0 ; i < IDT_ENTIES; i++) {
         idt_set_gate(i, 0);
     }
 

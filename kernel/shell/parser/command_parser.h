@@ -1,7 +1,7 @@
 #ifndef COMMAND_PARSER_H
 #define COMMAND_PARSER_H
 
-#include "../constants.h"
+#include "parser_constants.h"
 
 enum FlagType {
     FLAG_STRING,
